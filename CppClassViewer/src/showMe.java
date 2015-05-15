@@ -12,7 +12,6 @@ public class showMe extends JFrame{
 	public showMe(){
 		
 		
-		setSize(300,300);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		
@@ -34,6 +33,7 @@ public class showMe extends JFrame{
 		panel.add(button);
 		add(panel);
 		
+		pack();
 		
 		setVisible(true);		
 	}
