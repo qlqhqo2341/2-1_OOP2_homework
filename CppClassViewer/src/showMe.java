@@ -7,7 +7,7 @@ import javax.swing.*;
 
 public class showMe extends JFrame{
 	JButton button;
-	String a="¾È³çÇÏ½Å°¡.", b="ÈåÂS.";
+	String a="¾È³çÇÏ½Ådfdf.", b="ÈåÂS.";
 	
 	public showMe(){
 		
