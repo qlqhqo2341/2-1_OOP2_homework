@@ -3,12 +3,22 @@ package working;
 import java.io.*;
 
 public class ReadFile {
-	public static void main(String[] args) {
+
+	FileInputStream file= null;
+	
+	public ReadFile(String file_path){
+		try{
+			file=new FileInputStream(file_path);
+		}
+		catch(FileNotFoundException e){
+			System.out.println("FileNotFound");
+		}
+	}
+	
+	public String getText(){
 		int b = 0;
 		StringBuffer buffer = new StringBuffer();
-		FileInputStream file = null;
 		try {
-			file = new FileInputStream(args[0]);
 			b = file.read();
 			while( b!=-1 ){
 				buffer.append((char)b);
@@ -20,6 +30,7 @@ public class ReadFile {
 		} catch (IOException e){
 			System.out.println("Input error");
 		}
-		
+		return buffer.toString();
 	}
+	
 }
