@@ -9,13 +9,12 @@ public class Parser {
 	String allText;
 	StringTokenizer mainToken;
 	
-	
-	
-	
 	public Parser(String text){
 		allText=text;
 		mainToken = new StringTokenizer(allText, "{");
 		
+		initClass(nextFunction());
+			
 	}
 
 	public String[] nextFunction(){
@@ -61,8 +60,49 @@ public class Parser {
 		
 	}
 
-	
-	
+	public void initClass(String[] parts){
+		StringTokenizer token = new StringTokenizer(parts[0]);
+		String name=null;
+		while(token.hasMoreTokens()){
+			if(token.nextToken().equals("class")){
+				if(token.hasMoreTokens()){
+					name = token.nextToken();
+				}
+			}
+		}
+		
+		if(name==null){
+			System.out.println("is it CppClass??");
+			return;
+		}
+		
+		obj = new CppClass(name);
+		
+		int numFields=0, numMethods=0;
+		//count num of fields, methods
+		StringTokenizer countToken = new StringTokenizer(parts[1], " \n(");
+		while(countToken.hasMoreTokens()){
+			String k = countToken.nextToken();
+			if(Keyword.isType(k)){
+				String type=k;
+				String var_name=countToken.nextToken();
+				
+				if(var_name.charAt(var_name.length()-1)==';'){
+					
+				}
+				
+			}
+			
+			if(obj.getName().equals(k)){
+				
+			}
+			if(obj.getName().equals('~'+k)){
+				
+			}
+		}
+		
+		
+	}
 	
 	public static void main(String[] args) {
 		
