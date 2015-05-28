@@ -1,5 +1,6 @@
 package working;
 
+import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -29,14 +30,46 @@ public class Parser {
 		String define;
 		StringBuffer body = new StringBuffer();
 
-		int closer = 0;
-		int last_closer = -1;
-
+		int closer = 1;
+		int last_closer=0;
+		
+		try {
+			part[0]=mainToken.nextToken();
+			
+			String k = mainToken.nextToken();
+			
+			if(!k.equals("{"))
+				return null;
+			
+			while(closer>0){
+				k=mainToken.nextToken();
+				if(k.equals("{"))
+					closer++;
+				if(k.equals("}"))
+					closer--;
+				body.append(k);
+			}
+		} catch (NoSuchElementException e) {
+			// TODO: handle exception
+			return null;
+		}
+		
+		
+		body.deleteCharAt(body.length()-1); //last closer remove
+		part[1]=body.toString();
+		return part;
+		
+		
+		
+		
+		/*
 		if (mainToken.hasMoreTokens()) {
 			define = mainToken.nextToken();
 		} else
 			return null;
 
+		
+		
 		if (mainToken.hasMoreTokens())
 			do {
 				closer++;
@@ -64,10 +97,11 @@ public class Parser {
 			part[1] = body.toString();
 			return part;
 		}
-
+		 */
 	}
 
 	public void initClass(String[] parts) {
+		
 		StringTokenizer token = new StringTokenizer(parts[0]);
 		String name = null;
 		while (token.hasMoreTokens()) {
@@ -106,7 +140,7 @@ public class Parser {
 			}
 
 			if (obj.getName().equals(k)) {
-
+				
 			}
 			if (obj.getName().equals('~' + k)) {
 
@@ -117,7 +151,7 @@ public class Parser {
 
 	public static void main(String[] args) {
 		Parser k = new Parser("class me{ hohoho	}"
-				+ "\nint me::ddfdf(sss){nlidfe}");
+				+ "\nint me::ddfdf(sss){	if(true){hi!/}\n}");
 
 	}
 
