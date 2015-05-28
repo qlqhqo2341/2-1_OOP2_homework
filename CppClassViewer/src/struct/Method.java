@@ -34,9 +34,9 @@ public class Method {
 			
 		}
 		
-		for(int k=0;k<fieldsSize;k++){
+		for(int k=0;k<fieldsSize;k++)
 			fields[k].addMethods(this);
-		}
+		
 		
 	}
 	

@@ -5,14 +5,11 @@ import javax.swing.*;
 
 
 public class MainFrame extends JFrame{
-	
 	public MainFrame(){
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		setBounds(screenSize.width/4, screenSize.height/4,
-				screenSize.width/2, screenSize.height/2);	
+		setTitle("JJ_Class_Viewer");
+		setSize(1000,600);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(new GridLayout(0,2));
-		
 		
 		setVisible(true);
 	}

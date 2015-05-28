@@ -3,6 +3,8 @@ package ui;
 import java.awt.*;
 import javax.swing.*;
 
-public class ListPanel {
-
+public class ListPanel extends JPanel{
+	public ListPanel(){
+		
+	}
 }
