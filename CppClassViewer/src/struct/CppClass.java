@@ -46,6 +46,14 @@ public class CppClass {
 		return null;
 	}
 	
+	public Method[] getMethods(){
+		return methods;
+	}
+	
+	public Field[] getFields(){
+		return fields;
+	}
+	
 	public String getName(){
 		return name;
 	}
