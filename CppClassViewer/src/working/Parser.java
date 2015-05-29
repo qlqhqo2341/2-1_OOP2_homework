@@ -75,7 +75,7 @@ public class Parser {
 		 * int, void, 클래스 이름 등의 키워드를 체크하고 맞다면
 		 * 
 		 * 이름을 체크하고 동시에 ;으로 바로 끝나면 Field 클래스
-		 * ()가 포함되어 이다면 Method클래스를 생성함.
+		 * ()가 포함되어 있다면 Method클래스를 생성함.
 		 * 
 		 * 괄호 안의 키워드를 체크해서 Parameter클래스를 만들어서 Method에 설정해줄것.
 		 * 
@@ -85,15 +85,9 @@ public class Parser {
 		
 		StringTokenizer token = new StringTokenizer(parts[0]);
 		String name = null;
-		while (token.hasMoreTokens()) {
-			if (token.nextToken().equals("class")) {
-				if (token.hasMoreTokens()) {
+		try{	if (token.nextToken().equals("class"))
 					name = token.nextToken();
-				}
-			}
-		}
-
-		if (name == null) {
+		} catch(NoSuchElementException e){
 			System.out.println("is it CppClass??");
 			return;
 		}
