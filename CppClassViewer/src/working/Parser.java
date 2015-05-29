@@ -1,8 +1,7 @@
 package working;
 
-import java.util.NoSuchElementException;
-import java.util.StringTokenizer;
-import java.util.Vector;
+import java.io.*;
+import java.util.*;
 
 import struct.*;
 
@@ -14,8 +13,11 @@ public class Parser {
 	public Parser(String text) {
 		allText = text;
 		mainToken = new StringTokenizer(allText, "{}", true);
-		String[] dd = nextFunction();
 
+
+		initClass(nextFunction());
+		
+		String dd[] = nextFunction();
 		while (dd != null) {
 			System.out.println(dd[0] + "\nof body is below\n" + dd[1]);
 			System.out.println("body is end");
@@ -27,14 +29,16 @@ public class Parser {
 	public String[] nextFunction() {
 
 		String part[] = new String[2];
-		String define;
 		StringBuffer body = new StringBuffer();
 
 		int closer = 1;
-		int last_closer=0;
 		
 		try {
 			part[0]=mainToken.nextToken();
+			
+			if(part[0].indexOf(';')==0){
+				part[0]=part[0].substring(1);
+			}
 			
 			String k = mainToken.nextToken();
 			
@@ -55,52 +59,29 @@ public class Parser {
 		}
 		
 		
-		body.deleteCharAt(body.length()-1); //last closer remove
+		body.deleteCharAt(body.length()-1); //remove last closer
 		part[1]=body.toString();
 		return part;
 		
-		
-		
-		
-		/*
-		if (mainToken.hasMoreTokens()) {
-			define = mainToken.nextToken();
-		} else
-			return null;
-
-		
-		
-		if (mainToken.hasMoreTokens())
-			do {
-				closer++;
-				StringBuffer t = new StringBuffer();
-
-				t.append(mainToken.nextToken());
-				for (int k = 0; k < t.length(); k++) {
-					if (t.charAt(k) == '}') {
-						closer--;
-						last_closer = k + body.length();
-					}
-				}
-				body.append(t);
-			} while (mainToken.hasMoreTokens() && closer > 0);
-		else
-			return null;
-		
-		if (closer > 0)
-			return null;
-		else {
-			if (last_closer >= 0)
-				body.delete(last_closer, body.length());
-
-			part[0] = define;
-			part[1] = body.toString();
-			return part;
-		}
-		 */
 	}
 
 	public void initClass(String[] parts) {
+		//parts[0]에는 클래스의 이름이 저장 되어있음
+		// class ????
+	
+		//parts[1]에는 클래스를 정의하는 내용이 들어가있음
+		/* StringTokenizer를 이용해서
+		 * public:, private:이 나오는 것을 확인하고
+		 * int, void, 클래스 이름 등의 키워드를 체크하고 맞다면
+		 * 
+		 * 이름을 체크하고 동시에 ;으로 바로 끝나면 Field 클래스
+		 * ()가 포함되어 이다면 Method클래스를 생성함.
+		 * 
+		 * 괄호 안의 키워드를 체크해서 Parameter클래스를 만들어서 Method에 설정해줄것.
+		 * 
+		 * 각 클래스를 CppClass.addMethod 나 addField로 클래스에 넣어줌.
+		*/
+		
 		
 		StringTokenizer token = new StringTokenizer(parts[0]);
 		String name = null;
@@ -150,8 +131,25 @@ public class Parser {
 	}
 
 	public static void main(String[] args) {
-		Parser k = new Parser("class me{ hohoho	}"
-				+ "\nint me::ddfdf(sss){	if(true){hi!/}\n}");
+		String obj=null;
+		try {
+			StringBuffer buf = new StringBuffer();
+			FileInputStream stream = new FileInputStream("Queue.cpp");
+			int k=stream.read();
+			while(k!=-1){
+				buf.append((char)k);
+				k=stream.read();
+			}
+			obj=buf.toString();
+			stream.close();
+		} catch (IOException e) {
+			// TODO: handle exception
+			System.out.println("file read error!");
+			e.printStackTrace();
+			System.exit(0);
+		}
+		
+		new Parser(obj);
 
 	}
 
