@@ -13,6 +13,7 @@ private:
 	int last;
 	int first;
 };
+
 Queue::Queue(void)
 {
 	size = 10;

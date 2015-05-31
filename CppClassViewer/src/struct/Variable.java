@@ -2,7 +2,7 @@ package struct;
 
 public abstract class Variable {
 	private final String TYPE;
-	private final String name;
+	private String name;
 	
 	public Variable(String name, String type){
 		this.name = name;
@@ -14,6 +14,9 @@ public abstract class Variable {
 	}
 	public String getName(){
 		return name;
+	}
+	public void setName(String name){
+		this.name=name;
 	}
 	
 }

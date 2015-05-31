@@ -5,18 +5,31 @@ import java.util.StringTokenizer;
 public class Method {
 	private String name;
 	private String access;
+	private String returnType;
 	private Parameter par[];
 	private Field fields[];
 	private String body;
 	private int fieldsSize;
 	
-	public Method(String name, String access, Parameter... par){
+	public Method(String returnType, String name, String access){
+		this.returnType=returnType;
 		this.name = name;
 		this.access=access;
-		this.par = par.clone();
+		this.par = new Parameter[0];
 		fields = null;
 		fieldsSize = 0;
 		body = null;
+	}
+	
+	public void addParameter(Parameter par){
+		Parameter[] newPar=new Parameter[this.par.length+1];
+		
+		int i;
+		for(i=0;i<this.par.length;i++){
+			newPar[i]=this.par[i];
+		}
+		newPar[i]=par;
+		this.par=newPar;
 	}
 
 	public void setBody(Field[] fields, String body){
@@ -25,19 +38,19 @@ public class Method {
 		
 		StringTokenizer token = new StringTokenizer(body, " \n{}()=+-*/%;");
 		
+		for(Field f : fields)
+			f.removeMethod(this);
+		
 		while(token.hasMoreTokens()){
 			String k = token.nextToken();
 			
 			for(Field find : fields)
-				if(find.getName().equals(k))
+				if(find.getName().equals(k)){
 					this.fields[fieldsSize++]=find;
+					find.addMethods(this);
+				}
 			
 		}
-		
-		for(int k=0;k<fieldsSize;k++)
-			fields[k].addMethods(this);
-		
-		
 	}
 	
 	public Parameter[] getParameter(){
@@ -49,7 +62,7 @@ public class Method {
 			return fields.clone();
 		}
 		else{
-			System.out.println(name + "are not parsed.");
+			System.out.println(name + " are not parsed.");
 			return null;
 		}
 	}
