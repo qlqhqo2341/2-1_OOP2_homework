@@ -143,6 +143,7 @@ public class Parser {
 
 					for (String v : Keyword.getTypes()) { // Field or Method.
 						if (k.contains(v)) {
+							
 							Method met = null;
 							if (access == null)
 								throw new Exception("need to define access");
@@ -293,7 +294,7 @@ public class Parser {
 			System.exit(0);
 		}
 
-		new Parser(obj).getCppClass();
+		CppClass k = new Parser(obj).getCppClass();
 		
 		return;
 	}

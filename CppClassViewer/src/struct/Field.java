@@ -3,11 +3,19 @@ package struct;
 import struct.Variable;
 public class Field extends Variable{
 	private Method used[];
+	private Integer arr;
 	
 	
 	public Field(String name, String type){
+		super(name,type);
+		used = new Method[0];
+		arr=null;
+	}
+	
+	public Field(String name, String type,int size){
 		super(name, type);
 		used = new Method[0];
+		arr=new Integer(size);
 	}
 	
 	public void addMethods(Method... met){
@@ -57,6 +65,10 @@ public class Field extends Variable{
 
 	public Method[] getMethods(){
 		return used.clone();
+	}
+	
+	public Integer getArr(){
+		return arr;
 	}
 	
 }

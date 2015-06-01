@@ -9,6 +9,8 @@ public abstract class Variable {
 		TYPE=type;
 	}
 	
+	
+	
 	public String getType(){
 		return TYPE;
 	}

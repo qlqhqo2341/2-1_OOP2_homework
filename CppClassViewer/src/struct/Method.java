@@ -36,7 +36,7 @@ public class Method {
 		this.body = body;
 		this.fields = new Field[fields.length];
 		
-		StringTokenizer token = new StringTokenizer(body, " \n{}()=+-*/%;");
+		StringTokenizer token = new StringTokenizer(body, " \t\n{}()=+-*/%;");
 		
 		for(Field f : fields)
 			f.removeMethod(this);
