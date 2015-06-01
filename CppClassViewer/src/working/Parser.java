@@ -13,15 +13,19 @@ public class Parser {
 	public Parser(String text) {
 		allText = text;
 		mainToken = new StringTokenizer(allText, "{}", true);
-
-		initClass(nextBlock());
-
+		String dd[]=nextBlock();
+		if(dd==null)
+			return;
+		
+		initClass(dd);
+		
 		if (obj == null)
 			return;
 
-		String dd[] = nextBlock();
+		dd = nextBlock();
 		while (dd != null) {
 			Method needBody = findMethod(dd[0]);
+			needBody.setDefine(dd[0]);
 			needBody.setBody(obj.getFields(), dd[1]);
 			dd = nextBlock();
 		}
@@ -96,7 +100,7 @@ public class Parser {
 
 			cppName = token.nextToken();
 
-			obj = new CppClass(cppName);
+			obj = new CppClass(cppName,parts[0],parts[1]);
 
 			String delim=" \t\n(),;";
 			token = new StringTokenizer(parts[1], delim, true);
@@ -281,6 +285,8 @@ public class Parser {
 					e.printStackTrace();
 					return null;
 				}
+				//Find Method!
+				v.setDefine(part);
 				
 				return v;
 			}

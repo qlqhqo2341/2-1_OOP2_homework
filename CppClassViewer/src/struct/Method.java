@@ -6,10 +6,14 @@ public class Method {
 	private String name;
 	private String access;
 	private String returnType;
+	private String defineStr;
+	
 	private Parameter par[];
 	private Field fields[];
 	private String body;
 	private int fieldsSize;
+	
+	
 	
 	public Method(String returnType, String name, String access){
 		this.returnType=returnType;
@@ -19,6 +23,16 @@ public class Method {
 		fields = null;
 		fieldsSize = 0;
 		body = null;
+		defineStr=null;
+	}
+	
+	public void setDefine(String defineStr){
+		if(this.defineStr==null)
+			this.defineStr=defineStr;
+		
+	}
+	public String getDefine(){
+		return defineStr;
 	}
 	
 	public void addParameter(Parameter par){
@@ -51,6 +65,9 @@ public class Method {
 				}
 			
 		}
+	}
+	public String getBody(){
+		return body;
 	}
 	
 	public boolean hasField(Field fie){

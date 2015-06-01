@@ -6,11 +6,15 @@ public class CppClass {
 	private Field[] fields;
 	private String name;
 	
-	public CppClass(String name){
+	private String defineStr;
+	private String body;
+	
+	public CppClass(String name,String defineStr, String body){
 		this.name = name;
 		methods = new Method[0];
 		fields = new Field[0];
-		
+		this.defineStr=defineStr;
+		this.body=body;
 	}
 	
 	public void addMethod(Method obj){
@@ -45,6 +49,16 @@ public class CppClass {
 
 		return null;
 	}
+	
+	public String makeAllBody(){
+		StringBuffer text = new StringBuffer();
+		text.append(defineStr + "{" + body + "};");
+		
+		for(Method v : methods)
+			text.append(v.getDefine() + "{" + v.getBody() + "}");
+		return text.toString();
+	}
+	
 	
 	public Method[] getMethods(){
 		return methods;
