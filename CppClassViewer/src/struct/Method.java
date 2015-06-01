@@ -36,7 +36,7 @@ public class Method {
 		this.body = body;
 		this.fields = new Field[fields.length];
 		
-		StringTokenizer token = new StringTokenizer(body, " \t\n{}()=+-*/%;");
+		StringTokenizer token = new StringTokenizer(body, " \t\n{}()[]=+-*/%;");
 		
 		for(Field f : fields)
 			f.removeMethod(this);
@@ -45,12 +45,20 @@ public class Method {
 			String k = token.nextToken();
 			
 			for(Field find : fields)
-				if(find.getName().equals(k)){
+				if(find.getName().equals(k) && !hasField(find)){
 					this.fields[fieldsSize++]=find;
 					find.addMethods(this);
 				}
 			
 		}
+	}
+	
+	public boolean hasField(Field fie){
+		for(int i=0;i<fieldsSize;i++){
+			if(fields[i].equals(fie))
+				return true;
+		}
+		return false;
 	}
 	
 	public Parameter[] getParameter(){

@@ -145,6 +145,8 @@ public class Parser {
 						if (k.contains(v)) {
 							
 							Method met = null;
+							int arr=-1;
+							
 							if (access == null)
 								throw new Exception("need to define access");
 
@@ -153,7 +155,14 @@ public class Parser {
 								name=token.nextToken();
 							} while (delim.contains(name));
 			
-
+							int arrOpener=name.indexOf('[');
+							int arrCloser=name.indexOf(']');
+							
+							if( arrOpener < arrCloser && arrOpener > 0){
+								arr = Integer.parseInt(
+										name.substring(arrOpener+1, arrCloser));
+								name=name.substring(0, arrOpener);
+							}
 							type = v;
 
 							while (!k.equals(";")) {
@@ -164,13 +173,21 @@ public class Parser {
 									obj.addMethod(met);
 									continue;
 								}
+								arrOpener=k.indexOf('[');
+								arrCloser=k.indexOf(']');
+								if( arrOpener < arrCloser && arrOpener > 0)
+									arr = Integer.parseInt(
+											k.substring(arrOpener+1, arrCloser));
 								
 								k = token.nextToken();
 								
 							}
 
 							if (met == null) { // if this line field.
-								obj.addField(new Field(name, type));
+								if(arr>=0)
+									obj.addField(new Field(name, type, arr));
+								else
+									obj.addField(new Field(name, type));
 							}
 
 						}
