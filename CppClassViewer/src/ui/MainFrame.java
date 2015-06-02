@@ -47,8 +47,12 @@ public class MainFrame extends JFrame implements ActionListener, FocusListener, 
 		bodyTextArea.setEditable(true);
 		bodyTextArea.setText("Please select Method or Field");
 		bodyTextArea.setLineWrap(true);
+		bodyTextArea.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		bodyTextArea.addFocusListener(this);
 		add(bodyTextArea, BorderLayout.CENTER);
+		
+		//StartTest
+		readCppClass(new File("Queue.cpp"));
 
 		
 		setVisible(true);
@@ -131,13 +135,13 @@ public class MainFrame extends JFrame implements ActionListener, FocusListener, 
 			met.setBody(cppClass.getFields(), bodyTextArea.getText());
 		}
 
-		System.out.println("saved");
 	}
 	
 	@Override
 	public void valueChanged(TreeSelectionEvent e) {
 		// TODO Auto-generated method stub
 		JTree tree = listPanel.tree;
+		DefaultListModel listModel = listPanel.listModel;
 		
 		if(selectedObj instanceof Method){
 			focusLost(null);
@@ -147,9 +151,17 @@ public class MainFrame extends JFrame implements ActionListener, FocusListener, 
 		DefaultMutableTreeNode selNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 		selectedObj = selNode.getUserObject();
 		
-		if(selectedObj instanceof Method)
+		if(selectedObj instanceof Method){
 			bodyTextArea.setText(((Method) selectedObj).getBody());
-		
+			bodyTextArea.setVisible(true);
+			
+			listModel.removeAllElements();
+			for(Field fie : ((Method) selectedObj).getFields())
+				listModel.addElement(fie);
+		}
+		else if(selectedObj instanceof Field){
+			
+		}
 		
 	}
 	
@@ -166,7 +178,8 @@ public class MainFrame extends JFrame implements ActionListener, FocusListener, 
 class ListPanel extends JPanel {
 	JTree tree;
 	DefaultMutableTreeNode root;
-	JList<String> list;
+	JList list;
+	DefaultListModel listModel;
 
 	public ListPanel() {
 		
@@ -177,13 +190,13 @@ class ListPanel extends JPanel {
 				"Please open the Cpp File. (File -> open)");
 		tree = new JTree(root);
 		tree.setSize(400,300);
+		add(new JScrollPane(tree));
 
-		JScrollPane scroll = new JScrollPane(tree);
-		add(scroll);
-
-		list = new JList<String>();
-		add(list);
-
+		listModel = new DefaultListModel();
+		list = new JList(listModel);
+		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		add(new JScrollPane(list));
+		
 		setVisible(true);
 	}
 	
