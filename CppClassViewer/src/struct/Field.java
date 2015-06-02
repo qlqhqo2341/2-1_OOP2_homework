@@ -71,4 +71,10 @@ public class Field extends Variable{
 		return arr;
 	}
 	
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return getName();
+	}
+	
 }

@@ -71,4 +71,10 @@ public class CppClass {
 	public String getName(){
 		return name;
 	}
+	
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return getName();
+	}
 }

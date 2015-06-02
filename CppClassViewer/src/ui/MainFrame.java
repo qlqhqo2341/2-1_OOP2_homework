@@ -4,22 +4,23 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
-import javax.swing.event.*;
 import javax.swing.tree.*;
-
-import com.sun.javafx.tk.FileChooserType;
+import javax.swing.event.*;
 
 import java.io.*;
 
 import struct.*;
 import working.*;
 
-public class MainFrame extends JFrame implements ActionListener {
+public class MainFrame extends JFrame implements ActionListener, FocusListener, TreeSelectionListener{
+	
+	Object selectedObj;
 	CppClass cppClass;
 	JMenuBar menuBar;
 	JMenuItem open, save, exit;
 
 	JTextArea bodyTextArea;
+	JTable table;
 	ListPanel listPanel;
 
 	JFileChooser jfile;
@@ -31,18 +32,25 @@ public class MainFrame extends JFrame implements ActionListener {
 
 		jfile = new JFileChooser();
 
+		selectedObj=null;
 		initMenu();
 		setJMenuBar(menuBar);
+		
+		setLayout(new BorderLayout());
 
 		listPanel = new ListPanel();
+		listPanel.tree.addTreeSelectionListener(this);
 		add(listPanel, BorderLayout.WEST);
 
 		bodyTextArea = new JTextArea();
 		bodyTextArea.setSize(600,600);
 		bodyTextArea.setEditable(true);
 		bodyTextArea.setText("Please select Method or Field");
+		bodyTextArea.setLineWrap(true);
+		bodyTextArea.addFocusListener(this);
 		add(bodyTextArea, BorderLayout.CENTER);
 
+		
 		setVisible(true);
 	}
 
@@ -69,6 +77,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
 		listPanel.MakingTree(cppClass);
 		repaint();
+		setVisible(true);
 
 		return true;
 	}
@@ -113,7 +122,39 @@ public class MainFrame extends JFrame implements ActionListener {
 		}
 	}
 	
+	@Override
+	public void focusLost(FocusEvent e) {
+		// TODO Auto-generated method stub
+		
+		if (selectedObj instanceof Method) {
+			Method met = (Method) selectedObj;
+			met.setBody(cppClass.getFields(), bodyTextArea.getText());
+		}
 
+		System.out.println("saved");
+	}
+	
+	@Override
+	public void valueChanged(TreeSelectionEvent e) {
+		// TODO Auto-generated method stub
+		JTree tree = listPanel.tree;
+		
+		if(selectedObj instanceof Method){
+			focusLost(null);
+		}
+		
+		
+		DefaultMutableTreeNode selNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+		selectedObj = selNode.getUserObject();
+		
+		if(selectedObj instanceof Method)
+			bodyTextArea.setText(((Method) selectedObj).getBody());
+		
+		
+	}
+	
+	@Override
+	public void focusGained(FocusEvent e) {}
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		new MainFrame();
@@ -124,52 +165,48 @@ public class MainFrame extends JFrame implements ActionListener {
 
 class ListPanel extends JPanel {
 	JTree tree;
-	TreeModel model;
 	DefaultMutableTreeNode root;
 	JList<String> list;
 
 	public ListPanel() {
-		setSize(400, 600);
-
+		
+		setSize(400,600);
+		setLayout(new GridLayout(0, 1));
+		
 		root = new DefaultMutableTreeNode(
-				"Please open the Cpp File. (File - open)");
-
+				"Please open the Cpp File. (File -> open)");
 		tree = new JTree(root);
+		tree.setSize(400,300);
 
-		add(tree);
+		JScrollPane scroll = new JScrollPane(tree);
+		add(scroll);
 
-		list = new JList();
+		list = new JList<String>();
 		add(list);
 
 		setVisible(true);
 	}
-
-	public void setRootTree(String msg) {
-		remove(tree);
-		root = new DefaultMutableTreeNode(msg);
-		tree = new JTree(root);
-		add(tree);
-	}
+	
 
 	public void MakingTree(CppClass obj) {
 
-		remove(tree);
-		root = new DefaultMutableTreeNode(obj.getName());
-		tree = new JTree(root);
+		DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
+		
+		root.setUserObject(obj);
+		root.removeAllChildren();
+		
+		
 
 		for (Method v : obj.getMethods()) {
-			DefaultMutableTreeNode m = new DefaultMutableTreeNode(v.getName());
+			DefaultMutableTreeNode m = new DefaultMutableTreeNode(v);
 			root.add(m);
 		}
 		for (Field v : obj.getFields()) {
-			DefaultMutableTreeNode f = new DefaultMutableTreeNode(v.getName());
+			DefaultMutableTreeNode f = new DefaultMutableTreeNode(v);
 			root.add(f);
 		}
-		
-		JScrollPane scroll = new JScrollPane(tree);
-		//scroll.setSize(600,300);
-		add(scroll);
 
+		tree.expandRow(0);
 	}
 
 }

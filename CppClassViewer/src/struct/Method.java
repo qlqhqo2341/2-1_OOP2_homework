@@ -49,6 +49,7 @@ public class Method {
 	public void setBody(Field[] fields, String body){
 		this.body = body;
 		this.fields = new Field[fields.length];
+		fieldsSize=0;
 		
 		StringTokenizer token = new StringTokenizer(body, " \t\n{}()[]=+-*/%;");
 		
@@ -98,5 +99,23 @@ public class Method {
 	
 	public String getName(){
 		return name;
+	}
+	
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		StringBuffer buf = new StringBuffer(getName());
+		buf.append('(');
+		
+		for(Parameter p : par){
+			buf.append(p.getType());
+			if(p.getName()!=null)
+				buf.append(" " + p.getName());
+			buf.append(", ");
+		}
+		
+		buf.delete(buf.length()-2, buf.length());
+		buf.append(')');
+		return buf.toString();
 	}
 }

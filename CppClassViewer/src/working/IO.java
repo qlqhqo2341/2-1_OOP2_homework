@@ -1,8 +1,6 @@
 package working;
 
 import java.io.*;
-import java.nio.file.FileAlreadyExistsException;
-
 public class IO {
 
 	public static String read(File file){
@@ -16,6 +14,7 @@ public class IO {
 				buf.append((char)k);
 				k=input.read();
 			}
+			input.close();
 		}  catch (FileNotFoundException e) {
 			// TODO: handle exception
 			System.out.println("File Not found Error!");
@@ -37,7 +36,7 @@ public class IO {
 			for(char c : text.toCharArray()){
 				output.write(c);
 			}
-			
+			output.close();
 		} catch (FileNotFoundException e) {
 			// TODO: handle exception
 			System.out.println("File not making");
