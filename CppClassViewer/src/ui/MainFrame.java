@@ -154,10 +154,13 @@ public class MainFrame extends JFrame {
 
 			DefaultMutableTreeNode selNode = (DefaultMutableTreeNode) tree
 					.getLastSelectedPathComponent();
-			selectedObj = selNode.getUserObject();
 			CardLayout layout = (CardLayout) prePanel.getLayout();
 			listModel.removeAllElements();
-
+			
+			if(selNode == null)
+				return;
+			
+			selectedObj = selNode.getUserObject();
 			if (selectedObj instanceof Method) {
 				bodyTextArea.setText(((Method) selectedObj).getBody());
 
@@ -230,7 +233,7 @@ class ListPanel extends JPanel {
 			DefaultMutableTreeNode f = new DefaultMutableTreeNode(v);
 			root.add(f);
 		}
-
+		tree.setModel(new DefaultTreeModel(root));
 		tree.expandRow(0);
 	}
 
