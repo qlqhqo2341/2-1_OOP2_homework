@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.*;
 import javax.swing.event.*;
 
@@ -21,6 +22,7 @@ public class MainFrame extends JFrame implements ActionListener, FocusListener, 
 
 	JTextArea bodyTextArea;
 	JTable table;
+	PresentPanel prePanel;
 	ListPanel listPanel;
 
 	JFileChooser jfile;
@@ -42,14 +44,11 @@ public class MainFrame extends JFrame implements ActionListener, FocusListener, 
 		listPanel.tree.addTreeSelectionListener(this);
 		add(listPanel, BorderLayout.WEST);
 
-		bodyTextArea = new JTextArea();
-		bodyTextArea.setSize(600,600);
-		bodyTextArea.setEditable(true);
-		bodyTextArea.setText("Please select Method or Field");
-		bodyTextArea.setLineWrap(true);
-		bodyTextArea.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		prePanel = new PresentPanel();
+		bodyTextArea = prePanel.bodyTextArea;
 		bodyTextArea.addFocusListener(this);
-		add(bodyTextArea, BorderLayout.CENTER);
+		table = prePanel.table;
+		add(prePanel, BorderLayout.CENTER);
 		
 		//StartTest
 		readCppClass(new File("Queue.cpp"));
@@ -134,6 +133,7 @@ public class MainFrame extends JFrame implements ActionListener, FocusListener, 
 			Method met = (Method) selectedObj;
 			met.setBody(cppClass.getFields(), bodyTextArea.getText());
 		}
+		
 
 	}
 	
@@ -150,23 +150,41 @@ public class MainFrame extends JFrame implements ActionListener, FocusListener, 
 		
 		DefaultMutableTreeNode selNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 		selectedObj = selNode.getUserObject();
+		CardLayout layout=(CardLayout) prePanel.getLayout();
+		listModel.removeAllElements();
 		
 		if(selectedObj instanceof Method){
 			bodyTextArea.setText(((Method) selectedObj).getBody());
-			bodyTextArea.setVisible(true);
 			
-			listModel.removeAllElements();
+			
+			
 			for(Field fie : ((Method) selectedObj).getFields())
 				listModel.addElement(fie);
+			layout.show(prePanel, "text");
 		}
+		
 		else if(selectedObj instanceof Field){
+			DefaultTableModel model= (DefaultTableModel) table.getModel();
+			int rowCount=model.getRowCount();
 			
+			for(int i=0;i<rowCount;i++)
+				model.removeRow(0);
+			
+			Method[] mets = ((Field) selectedObj).getMethods();
+			for(Method v : mets){
+				String[] row={v.toString(),v.getType(),v.getAccess()};
+				model.addRow(row);
+			}
+			
+			layout.show(prePanel, "table");
 		}
+		
 		
 	}
 	
 	@Override
 	public void focusGained(FocusEvent e) {}
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		new MainFrame();
@@ -222,4 +240,43 @@ class ListPanel extends JPanel {
 		tree.expandRow(0);
 	}
 
+}
+
+class PresentPanel extends JPanel{
+	JTextArea bodyTextArea;
+	JTable table;
+	DefaultTableModel tableModel;
+	CardLayout layout;
+	
+	public PresentPanel() {
+		// TODO Auto-generated constructor stub
+		setSize(600,600);
+		setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		
+		layout=new CardLayout();
+		setLayout(layout);
+		
+		
+		bodyTextArea = new JTextArea();
+		bodyTextArea.setEditable(true);
+		bodyTextArea.setText("Please select Method or Field");
+		bodyTextArea.setLineWrap(true);
+		add(bodyTextArea,"text");
+		
+		String[] column={"Name", "Type","Access"};
+		tableModel = new DefaultTableModel(column,0);
+		table = new JTable(tableModel){
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+		};
+			
+		add(table, "table");
+		
+		setVisible(true);
+	}
+	
+	
 }

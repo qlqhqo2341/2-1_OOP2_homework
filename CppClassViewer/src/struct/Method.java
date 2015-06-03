@@ -100,12 +100,15 @@ public class Method {
 	public String getName(){
 		return name;
 	}
+	public String getType(){
+		return returnType;
+	}
 	
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
 		StringBuffer buf = new StringBuffer(getName());
-		buf.append('(');
+		buf.append(" ( ");
 		
 		for(Parameter p : par){
 			buf.append(p.getType());
@@ -115,7 +118,7 @@ public class Method {
 		}
 		
 		buf.delete(buf.length()-2, buf.length());
-		buf.append(')');
+		buf.append(" )");
 		return buf.toString();
 	}
 }

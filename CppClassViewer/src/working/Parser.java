@@ -116,7 +116,7 @@ public class Parser {
 						k = token.nextToken();
 					}
 
-					Method decon = makeMethod("DeCon", "~" + cppName, access,
+					Method decon = makeMethod("DeConstructor", "~" + cppName, access,
 							token);
 					obj.addMethod(decon);
 
@@ -127,7 +127,7 @@ public class Parser {
 						k = token.nextToken();
 					}
 
-					Method con = makeMethod("Con", cppName, access, token);
+					Method con = makeMethod("Constructor", cppName, access, token);
 					obj.addMethod(con);
 				}
 

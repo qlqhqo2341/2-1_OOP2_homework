@@ -74,7 +74,8 @@ public class Field extends Variable{
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return getName();
+		String arrStr = (getArr()!=null)  ?  "["+this.arr+"]" : "";
+		return getName() + " : " + getType() + arrStr;
 	}
 	
 }
