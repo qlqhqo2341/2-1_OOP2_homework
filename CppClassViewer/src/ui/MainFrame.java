@@ -153,10 +153,6 @@ public class MainFrame extends JFrame {
 			JTree tree = listPanel.tree;
 			DefaultListModel listModel = listPanel.listModel;
 
-			if (selectedObj instanceof Method) {
-				focusLost(null);
-			}
-
 			DefaultMutableTreeNode selNode = (DefaultMutableTreeNode) tree
 					.getLastSelectedPathComponent();
 			selectedObj = selNode.getUserObject();
@@ -169,6 +165,8 @@ public class MainFrame extends JFrame {
 				for (Field fie : ((Method) selectedObj).getFields())
 					listModel.addElement(fie);
 				layout.show(prePanel, "text");
+
+				focusLost(null);
 			}
 
 			else if (selectedObj instanceof Field) {
