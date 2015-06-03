@@ -68,7 +68,6 @@ public class Method {
 					this.fields[fieldsSize++] = find;
 					find.addMethods(this);
 				}
-
 		}
 	}
 
