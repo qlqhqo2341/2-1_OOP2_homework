@@ -14,7 +14,6 @@ import struct.*;
 import working.*;
 
 public class MainFrame extends JFrame {
-
 	Object selectedObj;
 	CppClass cppClass;
 	JMenuBar menuBar;
@@ -181,18 +180,14 @@ public class MainFrame extends JFrame {
 					String[] row = { v.toString(), v.getType(), v.getAccess() };
 					model.addRow(row);
 				}
-
 				layout.show(prePanel, "table");
 			}
-
 		}
 
 		@Override
 		public void focusGained(FocusEvent e) {
 		}
-
 	}
-
 }
 
 class ListPanel extends JPanel {
@@ -206,8 +201,7 @@ class ListPanel extends JPanel {
 		setSize(400, 600);
 		setLayout(new GridLayout(0, 1));
 
-		root = new DefaultMutableTreeNode(
-				"Please open the Cpp File. (File -> open)");
+		root = new DefaultMutableTreeNode("Please open the Cpp File. (File -> open)");
 		tree = new JTree(root);
 		tree.setSize(400, 300);
 		add(new JScrollPane(tree));
@@ -223,8 +217,7 @@ class ListPanel extends JPanel {
 	// CppClass로 트리를 설정합니다.
 	public void MakingTree(CppClass obj) {
 
-		DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel()
-				.getRoot();
+		DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
 
 		root.setUserObject(obj);
 		root.removeAllChildren();
@@ -272,9 +265,7 @@ class PresentPanel extends JPanel {
 				return false;
 			}
 		};
-
 		add(table, "table");
-
 		setVisible(true);
 	}
 

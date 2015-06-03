@@ -26,11 +26,9 @@ public class Method {
 
 	// 이 메소드의 선언문을 저장하고 읽어옵니다.
 	public void setDefine(String defineStr) {
-
 		// 선언문은 한번 저장하면 수정이 불가능하도록 합니다.
 		if (this.defineStr == null)
 			this.defineStr = defineStr;
-
 	}
 
 	public String getDefine() {
