@@ -13,8 +13,8 @@ import java.io.*;
 import struct.*;
 import working.*;
 
-public class MainFrame extends JFrame implements ActionListener, FocusListener, TreeSelectionListener{
-	
+public class MainFrame extends JFrame {
+
 	Object selectedObj;
 	CppClass cppClass;
 	JMenuBar menuBar;
@@ -27,36 +27,38 @@ public class MainFrame extends JFrame implements ActionListener, FocusListener, 
 
 	JFileChooser jfile;
 
+	MainFrame me;
+	Listener listener;
+
 	public MainFrame() {
 		setTitle("JJ_Class_Viewer");
 		setSize(1000, 600);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		jfile = new JFileChooser();
+		me = this;
+		listener = new Listener();
 
-		selectedObj=null;
+		selectedObj = null;
 		initMenu();
 		setJMenuBar(menuBar);
-		
+
 		setLayout(new BorderLayout());
 
 		listPanel = new ListPanel();
-		listPanel.tree.addTreeSelectionListener(this);
+		listPanel.tree.addTreeSelectionListener(listener);
 		add(listPanel, BorderLayout.WEST);
 
 		prePanel = new PresentPanel();
 		bodyTextArea = prePanel.bodyTextArea;
-		bodyTextArea.addFocusListener(this);
+		bodyTextArea.addFocusListener(listener);
 		table = prePanel.table;
 		add(prePanel, BorderLayout.CENTER);
-		
-		//StartTest
-		readCppClass(new File("Queue.cpp"));
 
-		
 		setVisible(true);
 	}
 
+	// 파일을 읽어 Parsing을 사용해 CppClass를 만듭니다.
 	private boolean readCppClass(File file) {
 
 		try {
@@ -85,112 +87,114 @@ public class MainFrame extends JFrame implements ActionListener, FocusListener, 
 		return true;
 	}
 
+	// 메뉴를 만듭니다.
 	private void initMenu() {
+
 		menuBar = new JMenuBar();
 		JMenu menu = new JMenu("File");
 		menuBar.add(menu);
 
 		open = new JMenuItem("open");
-		open.addActionListener(this);
+		open.addActionListener(listener);
 		menu.add(open);
 
 		save = new JMenuItem("save");
-		save.addActionListener(this);
+		save.addActionListener(listener);
 		menu.add(save);
 
 		exit = new JMenuItem("exit");
-		exit.addActionListener(this);
+		exit.addActionListener(listener);
 		menu.add(exit);
 
 	}
 
-	@Override
-	public void actionPerformed(java.awt.event.ActionEvent e) {
-		// TODO Auto-generated method stub
-		if (e.getSource().equals(open)) {
-			int returnVal = jfile.showOpenDialog(this);
-			if (returnVal == JFileChooser.APPROVE_OPTION)
-				readCppClass(jfile.getSelectedFile());
-			
-		} else if (e.getSource().equals(save)) {
-			String allText = cppClass.makeAllBody();
-
-			int returnVal = jfile.showSaveDialog(this);
-			if (returnVal == JFileChooser.APPROVE_OPTION)
-				IO.write(jfile.getSelectedFile(), allText);
-			
-
-		} else if (e.getSource().equals(exit)) {
-			System.exit(0);
-		}
-	}
-	
-	@Override
-	public void focusLost(FocusEvent e) {
-		// TODO Auto-generated method stub
-		
-		if (selectedObj instanceof Method) {
-			Method met = (Method) selectedObj;
-			met.setBody(cppClass.getFields(), bodyTextArea.getText());
-		}
-		
-
-	}
-	
-	@Override
-	public void valueChanged(TreeSelectionEvent e) {
-		// TODO Auto-generated method stub
-		JTree tree = listPanel.tree;
-		DefaultListModel listModel = listPanel.listModel;
-		
-		if(selectedObj instanceof Method){
-			focusLost(null);
-		}
-		
-		
-		DefaultMutableTreeNode selNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-		selectedObj = selNode.getUserObject();
-		CardLayout layout=(CardLayout) prePanel.getLayout();
-		listModel.removeAllElements();
-		
-		if(selectedObj instanceof Method){
-			bodyTextArea.setText(((Method) selectedObj).getBody());
-			
-			
-			
-			for(Field fie : ((Method) selectedObj).getFields())
-				listModel.addElement(fie);
-			layout.show(prePanel, "text");
-		}
-		
-		else if(selectedObj instanceof Field){
-			DefaultTableModel model= (DefaultTableModel) table.getModel();
-			int rowCount=model.getRowCount();
-			
-			for(int i=0;i<rowCount;i++)
-				model.removeRow(0);
-			
-			Method[] mets = ((Field) selectedObj).getMethods();
-			for(Method v : mets){
-				String[] row={v.toString(),v.getType(),v.getAccess()};
-				model.addRow(row);
-			}
-			
-			layout.show(prePanel, "table");
-		}
-		
-		
-	}
-	
-	@Override
-	public void focusGained(FocusEvent e) {}
-	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		new MainFrame();
 	}
 
-	
+	private class Listener implements ActionListener, FocusListener,
+			TreeSelectionListener {
+		@Override
+		public void actionPerformed(java.awt.event.ActionEvent e) {
+			// TODO Auto-generated method stub
+			if (e.getSource().equals(open)) {
+				int returnVal = jfile.showOpenDialog(me);
+				if (returnVal == JFileChooser.APPROVE_OPTION)
+					readCppClass(jfile.getSelectedFile());
+
+			} else if (e.getSource().equals(save)) {
+				String allText = cppClass.makeAllBody();
+
+				int returnVal = jfile.showSaveDialog(me);
+				if (returnVal == JFileChooser.APPROVE_OPTION)
+					IO.write(jfile.getSelectedFile(), allText);
+
+			} else if (e.getSource().equals(exit)) {
+				System.exit(0);
+			}
+		}
+
+		@Override
+		public void focusLost(FocusEvent e) {
+
+			// TODO Auto-generated method stub
+
+			if (selectedObj instanceof Method) {
+				Method met = (Method) selectedObj;
+				met.setBody(cppClass.getFields(), bodyTextArea.getText());
+			}
+
+		}
+
+		@Override
+		public void valueChanged(TreeSelectionEvent e) {
+			// TODO Auto-generated method stub
+			JTree tree = listPanel.tree;
+			DefaultListModel listModel = listPanel.listModel;
+
+			if (selectedObj instanceof Method) {
+				focusLost(null);
+			}
+
+			DefaultMutableTreeNode selNode = (DefaultMutableTreeNode) tree
+					.getLastSelectedPathComponent();
+			selectedObj = selNode.getUserObject();
+			CardLayout layout = (CardLayout) prePanel.getLayout();
+			listModel.removeAllElements();
+
+			if (selectedObj instanceof Method) {
+				bodyTextArea.setText(((Method) selectedObj).getBody());
+
+				for (Field fie : ((Method) selectedObj).getFields())
+					listModel.addElement(fie);
+				layout.show(prePanel, "text");
+			}
+
+			else if (selectedObj instanceof Field) {
+				DefaultTableModel model = (DefaultTableModel) table.getModel();
+				int rowCount = model.getRowCount();
+
+				for (int i = 0; i < rowCount; i++)
+					model.removeRow(0);
+
+				Method[] mets = ((Field) selectedObj).getMethods();
+				for (Method v : mets) {
+					String[] row = { v.toString(), v.getType(), v.getAccess() };
+					model.addRow(row);
+				}
+
+				layout.show(prePanel, "table");
+			}
+
+		}
+
+		@Override
+		public void focusGained(FocusEvent e) {
+		}
+
+	}
+
 }
 
 class ListPanel extends JPanel {
@@ -200,33 +204,32 @@ class ListPanel extends JPanel {
 	DefaultListModel listModel;
 
 	public ListPanel() {
-		
-		setSize(400,600);
+
+		setSize(400, 600);
 		setLayout(new GridLayout(0, 1));
-		
+
 		root = new DefaultMutableTreeNode(
 				"Please open the Cpp File. (File -> open)");
 		tree = new JTree(root);
-		tree.setSize(400,300);
+		tree.setSize(400, 300);
 		add(new JScrollPane(tree));
 
 		listModel = new DefaultListModel();
 		list = new JList(listModel);
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		add(new JScrollPane(list));
-		
+
 		setVisible(true);
 	}
-	
 
+	// CppClass로 트리를 설정합니다.
 	public void MakingTree(CppClass obj) {
 
-		DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
-		
+		DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel()
+				.getRoot();
+
 		root.setUserObject(obj);
 		root.removeAllChildren();
-		
-		
 
 		for (Method v : obj.getMethods()) {
 			DefaultMutableTreeNode m = new DefaultMutableTreeNode(v);
@@ -242,41 +245,39 @@ class ListPanel extends JPanel {
 
 }
 
-class PresentPanel extends JPanel{
+class PresentPanel extends JPanel {
 	JTextArea bodyTextArea;
 	JTable table;
 	DefaultTableModel tableModel;
 	CardLayout layout;
-	
+
 	public PresentPanel() {
 		// TODO Auto-generated constructor stub
-		setSize(600,600);
+		setSize(600, 600);
 		setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		
-		layout=new CardLayout();
+
+		layout = new CardLayout();
 		setLayout(layout);
-		
-		
+
 		bodyTextArea = new JTextArea();
 		bodyTextArea.setEditable(true);
 		bodyTextArea.setText("Please select Method or Field");
 		bodyTextArea.setLineWrap(true);
-		add(bodyTextArea,"text");
-		
-		String[] column={"Name", "Type","Access"};
-		tableModel = new DefaultTableModel(column,0);
-		table = new JTable(tableModel){
+		add(bodyTextArea, "text");
+
+		String[] column = { "Name", "Type", "Access" };
+		tableModel = new DefaultTableModel(column, 0);
+		table = new JTable(tableModel) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				// TODO Auto-generated method stub
 				return false;
 			}
 		};
-			
+
 		add(table, "table");
-		
+
 		setVisible(true);
 	}
-	
-	
+
 }
